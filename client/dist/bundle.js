@@ -14,6 +14,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var _components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/ChatWindow.jsx */ "./src/components/ChatWindow.jsx");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -30,35 +31,95 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
-var App = function App() {
-  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
-      _useState2 = _slicedToArray(_useState, 2),
-      username = _useState2[0],
-      setUsername = _useState2[1];
 
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+var App = function App() {
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+      _useState2 = _slicedToArray(_useState, 2),
+      usernameInput = _useState2[0],
+      setUsernameInput = _useState2[1];
+
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
       _useState4 = _slicedToArray(_useState3, 2),
-      room = _useState4[0],
-      setRoom = _useState4[1];
+      passwordInput = _useState4[0],
+      setPasswordInput = _useState4[1];
 
   var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState6 = _slicedToArray(_useState5, 2),
-      rooms = _useState6[0],
-      setRooms = _useState6[1];
+      usernameValid = _useState6[0],
+      setUsernameValid = _useState6[1];
 
-  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState8 = _slicedToArray(_useState7, 2),
-      roomCatalogue = _useState8[0],
-      setRoomCatalogue = _useState8[1];
+      passwordValid = _useState8[0],
+      setPasswordValid = _useState8[1];
 
-  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState10 = _slicedToArray(_useState9, 2),
-      userLogin = _useState10[0],
-      setUserLogin = _useState10[1];
+      usernameAvailable = _useState10[0],
+      setUsernameAvailable = _useState10[1];
+
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState12 = _slicedToArray(_useState11, 2),
+      user = _useState12[0],
+      setUser = _useState12[1];
+
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState14 = _slicedToArray(_useState13, 2),
+      room = _useState14[0],
+      setRoom = _useState14[1];
+
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState16 = _slicedToArray(_useState15, 2),
+      rooms = _useState16[0],
+      setRooms = _useState16[1];
+
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+      _useState18 = _slicedToArray(_useState17, 2),
+      roomCatalogue = _useState18[0],
+      setRoomCatalogue = _useState18[1];
 
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     getAllRooms();
-  }, [username]);
+  }, [user]);
+
+  var handleUserLoginSubmit = function handleUserLoginSubmit(e) {
+    var validate1 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_2__.validateUsername)(usernameInput);
+    var validate2 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_2__.validatePassword)(passwordInput);
+    setUsernameValid(validate1);
+    setPasswordValid(validate2);
+
+    if (Array.isArray(validate1) || Array.isArray(validate2)) {
+      return;
+    }
+
+    return fetch("/users?user=".concat(usernameInput)).then(function (result) {
+      return result.json();
+    }).then(function (getUserResult) {
+      if (getUserResult === 'username doesn\'t exist') {
+        setUsernameAvailable('Username available!');
+        fetch('/users', {
+          method: 'POST',
+          body: JSON.stringify({
+            username: usernameInput,
+            password: passwordInput
+          })
+        }).then(function (result) {
+          return result.json();
+        }).then(function (result) {
+          return setUser({
+            username: usernameInput,
+            userId: result
+          });
+        })["catch"](function (err) {
+          return console.error(err);
+        });
+      } else {
+        setUsernameAvailable('Username already taken.');
+      }
+    })["catch"](function (err) {
+      return console.error(err);
+    });
+  };
 
   var getAllRooms = function getAllRooms() {
     fetch('/rooms').then(function (results) {
@@ -82,60 +143,46 @@ var App = function App() {
     }
   };
 
-  var handleUserLogInChange = function handleUserLogInChange(e) {
-    //A NEW USER CANNOT BE ALL NUMBERS
-    setUserLogin(e.target.value);
+  var handleUsernameChange = function handleUsernameChange(e) {
+    setUsernameInput(e.target.value);
   };
 
-  var handleUserLoginSubmit = function handleUserLoginSubmit(e) {
-    //A NEW USER CANNOT BE ALL NUMBERS
-    return fetch("/users?user=".concat(userLogin)).then(function (result) {
-      return result.json();
-    }).then(function (getUserResult) {
-      if (getUserResult === null) {
-        fetch('/users', {
-          method: 'POST',
-          body: JSON.stringify({
-            username: userLogin
-          })
-        }).then(function (result) {
-          return result.json();
-        }).then(function (result) {
-          return setUsername({
-            username: userLogin,
-            userId: result
-          });
-        })["catch"](function (err) {
-          return console.error(err);
-        });
-      } else {
-        setUsername({
-          username: userLogin,
-          userId: getUserResult
-        });
-      }
-    })["catch"](function (err) {
-      return console.error(err);
-    });
+  var handlePasswordChange = function handlePasswordChange(e) {
+    setPasswordInput(e.target.value);
   };
 
-  if (username === null) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+  if (user === null) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", null, "Username:", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
       onKeyDown: handleEnterKeyPress,
-      onChange: handleUserLogInChange
-    }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+      onChange: handleUsernameChange,
+      value: usernameInput
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      className: "username-validity"
+    }, Array.isArray(usernameValid) ? JSON.stringify(usernameValid) : usernameValid), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      className: "username-availability"
+    }, usernameAvailable), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", null, "Password:", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+      onKeyDown: handleEnterKeyPress,
+      onChange: handlePasswordChange,
+      value: passwordInput
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      className: "password-validity"
+    }, Array.isArray(passwordValid) ? JSON.stringify(passwordValid) : passwordValid), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
       onClick: handleUserLoginSubmit
-    }, "Log In")));
+    }, "Log In"));
   }
 
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("header", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "Chat App"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("hr", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("main", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
-    username: username,
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("header", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "AdelyApp"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "current-username"
+  }, "Logged in as: ", user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("hr", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("main", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "chat-window-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    username: user,
     room: room,
     rooms: rooms,
     roomCatalogue: roomCatalogue,
     setRoom: setRoom,
     getAllRooms: getAllRooms
-  })));
+  }))));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (App);
@@ -303,13 +350,10 @@ var ChatWindow = function ChatWindow(_ref) {
       return;
     }
 
-    console.log('changing room');
-    console.log('clearing interval', intervalId);
     clearInterval(intervalId);
     var newIntervalId = setInterval(function () {
       return getMessagesByRoomId(room.id);
     }, 200);
-    console.log('newIntervalId is', newIntervalId);
     setIntervalId(newIntervalId);
   }, [room]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_RoomSelect_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {
@@ -347,7 +391,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var Message = function Message(_ref) {
-  var messageData = _ref.messageData;
+  var self = _ref.self,
+      messageData = _ref.messageData;
   var id = messageData.id,
       message = messageData.message,
       timestamp = messageData.timestamp,
@@ -355,7 +400,9 @@ var Message = function Message(_ref) {
       roomId = messageData.roomId;
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "message"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, username, ":\xA0"), message));
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
+    className: "message-username".concat(username === self.username ? ' self' : ' other')
+  }, username, ":\xA0"), message));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Message);
@@ -387,6 +434,7 @@ var MessageFeed = function MessageFeed(_ref) {
   }, messages.length ? messages.map(function (message, i) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Message_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
       key: "message-".concat(username, "-").concat(message.id, "-").concat(i),
+      self: username,
       messageData: message
     });
   }) : null));
@@ -487,19 +535,25 @@ var RoomSelect = function RoomSelect(_ref) {
       handleAddRoomChange = _ref.handleAddRoomChange,
       handleSelectRoomChange = _ref.handleSelectRoomChange,
       addRoomInputText = _ref.addRoomInputText;
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("select", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "room-select-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "create-room-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+    onChange: handleAddRoomChange,
+    value: addRoomInputText
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    className: "create-room-button",
+    onClick: addRoom
+  }, "Create Room")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("select", {
+    className: "select-room-dropdown",
     onChange: handleSelectRoomChange
   }, rooms.map(function (room, i) {
     return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
       key: "".concat(room.name, "-").concat(room.id, "-").concat(i),
       value: room.id
     }, room.name);
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
-    onChange: handleAddRoomChange,
-    value: addRoomInputText
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-    onClick: addRoom
-  }, "Create Room"));
+  })));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (RoomSelect);
@@ -30313,6 +30367,145 @@ if (false) {} else {
 if (false) {} else {
   module.exports = __webpack_require__(/*! ./cjs/scheduler-tracing.development.js */ "./node_modules/scheduler/cjs/scheduler-tracing.development.js");
 }
+
+
+/***/ }),
+
+/***/ "./src/utils.js":
+/*!**********************!*\
+  !*** ./src/utils.js ***!
+  \**********************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "validateUsername": () => (/* binding */ validateUsername),
+/* harmony export */   "validatePassword": () => (/* binding */ validatePassword)
+/* harmony export */ });
+var validateUsername = function validateUsername(username) {
+  var invalidReasons = [];
+
+  if (username.length < 8 || username.length > 20) {
+    invalidReasons.push('have between 8 and 20 characters');
+  }
+
+  var letters = 0;
+  var containsSpaces = false;
+  var invalidChar = false;
+  var regex = /[a-zA-Z]/;
+
+  for (var i = 0; i < username.length; i += 1) {
+    var _char = username[i];
+
+    if (regex.test(_char)) {
+      letters += 1;
+      continue;
+    }
+
+    if (parseInt(_char) >= 0) {
+      continue;
+    }
+
+    if (_char === ' ') {
+      containsSpaces = true;
+      continue;
+    }
+
+    if (_char === '.' || _char === '@' || _char === '_' || _char === '-') {
+      continue;
+    }
+
+    invalidChar = true;
+  }
+
+  if (!letters) {
+    invalidReasons.push('contain at least one letter');
+  }
+
+  if (containsSpaces) {
+    invalidReasons.push('NOT contain any spaces');
+  }
+
+  if (invalidChar) {
+    invalidReasons.push('only contain letters, numbers, and special characters @.-_');
+  }
+
+  return invalidReasons.length ? invalidReasons : 'valid';
+};
+
+var validatePassword = function validatePassword(password) {
+  var invalidReasons = [];
+
+  if (password.length < 8 || password.length > 15) {
+    invalidReasons.push('have between 8 to 15 characters.');
+  }
+
+  var lowerCase = 0;
+  var upperCase = 0;
+  var letters = 0;
+  var numbers = 0;
+  var specialChars = 0;
+  var threeInRow = false;
+  var inRowCount = [0, null];
+  var specialCharsRegex = /^[^a-zA-Z]+$/;
+
+  for (var i = 0; i < password.length; i += 1) {
+    var _char2 = password[i];
+
+    if (_char2 === ' ') {
+      invalidReasons.push('have no spaces.');
+    }
+
+    if (isNaN(Number(_char2))) {
+      if (specialCharsRegex.test(_char2)) {
+        specialChars += 1;
+      } else {
+        letters += 1;
+        _char2 === _char2.toUpperCase() ? upperCase += 1 : lowerCase += 1;
+      }
+    } else {
+      numbers += 1;
+    }
+
+    if (_char2 === inRowCount[1]) {
+      inRowCount[0] += 1;
+    } else {
+      inRowCount[0] = 1;
+      inRowCount[1] = _char2;
+    }
+
+    if (inRowCount[0] === 3) {
+      threeInRow = true;
+    }
+  }
+
+  if (threeInRow) {
+    invalidReasons.push('NOT have 3 of the same characters in a row');
+  }
+
+  if (letters < 3) {
+    invalidReasons.push('have at least 3 letters.');
+  }
+
+  var atLeastThree = 0;
+  var neededAtLeastThreeOf = [];
+  lowerCase ? atLeastThree += 1 : neededAtLeastThreeOf.push('have a lower case letter');
+  upperCase ? atLeastThree += 1 : neededAtLeastThreeOf.push('have an upper case letter');
+  numbers ? atLeastThree += 1 : neededAtLeastThreeOf.push('have a number');
+  specialChars ? atLeastThree += 1 : neededAtLeastThreeOf.push('have a special character');
+
+  if (!invalidReasons.length && atLeastThree >= 3) {
+    return 'valid';
+  }
+
+  if (atLeastThree < 3) {
+    invalidReasons.push('have at least three of the following: ');
+    invalidReasons = invalidReasons.concat(neededAtLeastThreeOf);
+  }
+
+  return invalidReasons;
+};
+
 
 
 /***/ })

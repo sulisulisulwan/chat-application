@@ -49,11 +49,8 @@ const ChatWindow = ({ username, rooms, room, setRoom, getAllRooms, roomCatalogue
   useEffect(() => {
     if (room === null) { return; }
     
-    console.log('changing room')
-    console.log('clearing interval', intervalId)
     clearInterval(intervalId);
     let newIntervalId = setInterval(() => getMessagesByRoomId(room.id), 200)
-    console.log('newIntervalId is', newIntervalId)
     setIntervalId(newIntervalId);
   }, [room])
 

@@ -1,19 +1,57 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import ChatWindow from './components/ChatWindow.jsx';
-
+import { validateUsername, validatePassword } from './utils.js'
 const App = () => {
 
-  const [ username, setUsername ] = useState(null)
+  const [ usernameInput, setUsernameInput ] = useState('')
+  const [ passwordInput, setPasswordInput ] = useState('')
+	const [ usernameValid, setUsernameValid] = useState(null)
+	const [ passwordValid, setPasswordValid] = useState(null)
+	const [ usernameAvailable, setUsernameAvailable ] = useState(null);
+
+
+  const [ user, setUser ] = useState(null)
   const [ room, setRoom ] = useState(null);
 	const [ rooms, setRooms ] = useState(null);
 	const [ roomCatalogue, setRoomCatalogue ] = useState({});
-	const [ userLogin, setUserLogin ] = useState('')
 
 	useEffect(() => {
 		getAllRooms()
-	}, [username])
+	}, [user])
 
+	const handleUserLoginSubmit = (e) => {
+
+		const validate1 = validateUsername(usernameInput);
+		const validate2 = validatePassword(passwordInput);
+
+		setUsernameValid(validate1)
+		setPasswordValid(validate2)
+
+		if (Array.isArray(validate1) || Array.isArray(validate2)) {
+			return;
+		}
+
+		return fetch(`/users?user=${usernameInput}`)
+			.then(result => result.json())
+			.then(getUserResult => {
+				if (getUserResult === 'username doesn\'t exist') {
+					setUsernameAvailable('Username available!')
+					fetch('/users', {
+						method: 'POST',
+						body: JSON.stringify({
+							username: usernameInput, password: passwordInput
+						})
+					})
+						.then(result => result.json())
+						.then(result => setUser({ username: usernameInput, userId: result }))
+						.catch(err => console.error(err));
+				} else {
+					setUsernameAvailable('Username already taken.')
+				}
+			})
+			.catch(err => console.error(err))
+	}
 
 	const getAllRooms = () => {
 		fetch('/rooms')
@@ -33,41 +71,28 @@ const App = () => {
 		}
 	}
 
-	const handleUserLogInChange = (e) => {
-		//A NEW USER CANNOT BE ALL NUMBERS
-		setUserLogin(e.target.value);
+	const handleUsernameChange = (e) => {
+		setUsernameInput(e.target.value);
 	}
-	
-	const handleUserLoginSubmit = (e) => {
-		//A NEW USER CANNOT BE ALL NUMBERS
-		return fetch(`/users?user=${userLogin}`)
-			.then(result => result.json())
-			.then(getUserResult => {
-				if (getUserResult === null) {
-					fetch('/users', {
-						method: 'POST',
-						body: JSON.stringify({
-							username: userLogin
-						})
-					})
-						.then(result => result.json())
-						.then(result => setUsername({ username: userLogin, userId: result }))
-						.catch(err => console.error(err));
-				} else {
-					setUsername({ username: userLogin, userId: getUserResult })
-				}
-			})
-			.catch(err => console.error(err))
+	const handlePasswordChange = (e) => {
+		setPasswordInput(e.target.value);
 	}
 
-
-	if (username === null) {
+	if (user === null) {
 		return (
 			<div>
 				<label>
-					<input onKeyDown={handleEnterKeyPress} onChange={handleUserLogInChange}></input>
-					<button onClick={handleUserLoginSubmit}>Log In</button>
+					Username: 
+					<input onKeyDown={handleEnterKeyPress} onChange={handleUsernameChange} value={usernameInput}></input>
 				</label>
+				<div className="username-validity">{Array.isArray(usernameValid) ? JSON.stringify(usernameValid) : usernameValid}</div>
+				<div className="username-availability">{usernameAvailable}</div>
+				<label>
+					Password: 
+					<input onKeyDown={handleEnterKeyPress} onChange={handlePasswordChange} value={passwordInput}></input>
+				</label>
+				<div className="password-validity">{Array.isArray(passwordValid) ? JSON.stringify(passwordValid) : passwordValid}</div>
+				<button onClick={handleUserLoginSubmit}>Log In</button>
 			</div>
 		)
 	}
@@ -75,18 +100,21 @@ const App = () => {
 	return (
 		<div>
 			<header>
-				<h1>Chat App</h1>
+				<h1>AdelyApp</h1>
+				<div className="current-username">Logged in as: {user.username}</div>
 				<hr></hr>
 			</header>
 			<main>
-				<ChatWindow 
-					username={username} 
-					room={room} 
-					rooms={rooms} 
-					roomCatalogue={roomCatalogue}
-					setRoom={setRoom}
-					getAllRooms={getAllRooms}
-				/>
+				<div className="chat-window-wrapper">
+					<ChatWindow 
+						username={user} 
+						room={room} 
+						rooms={rooms} 
+						roomCatalogue={roomCatalogue}
+						setRoom={setRoom}
+						getAllRooms={getAllRooms}
+					/>
+				</div>
 			</main>
 		</div>
 	)

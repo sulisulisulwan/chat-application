@@ -6,7 +6,7 @@ const MessageFeed = ({ username, messages }) => {
     <div className="chats-wrapper">
       <div className="chats">
         {messages.length ? 
-          messages.map((message, i) => <Message key={`message-${username}-${message.id}-${i}`} messageData={message}/>)
+          messages.map((message, i) => <Message key={`message-${username}-${message.id}-${i}`} self={username} messageData={message}/>)
           : null
         }
       </div>
