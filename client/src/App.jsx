@@ -1,4 +1,5 @@
 import React from 'react';
+import Login from './Login.jsx'
 import { useState, useEffect } from 'react';
 import ChatWindow from './components/ChatWindow.jsx';
 import { validateUsername, validatePassword } from './utils.js'
@@ -80,30 +81,25 @@ const App = () => {
 
 	if (user === null) {
 		return (
-			<div>
-				<label>
-					Username: 
-					<input onKeyDown={handleEnterKeyPress} onChange={handleUsernameChange} value={usernameInput}></input>
-				</label>
-				<div className="username-validity">{Array.isArray(usernameValid) ? JSON.stringify(usernameValid) : usernameValid}</div>
-				<div className="username-availability">{usernameAvailable}</div>
-				<label>
-					Password: 
-					<input onKeyDown={handleEnterKeyPress} onChange={handlePasswordChange} value={passwordInput}></input>
-				</label>
-				<div className="password-validity">{Array.isArray(passwordValid) ? JSON.stringify(passwordValid) : passwordValid}</div>
-				<button onClick={handleUserLoginSubmit}>Log In</button>
-			</div>
+			<>
+				<Login
+				  handleEnterKeyPress={handleEnterKeyPress}
+					handleUsernameChange={handleUsernameChange}
+					usernameInput={usernameInput}
+					usernameValid={usernameValid} 
+					usernameAvailable={usernameAvailable}
+					handlePasswordChange={handlePasswordChange}
+					passwordInput={passwordInput}
+					passwordValid={passwordValid}
+					handleUserLoginSubmit={handleUserLoginSubmit}
+				/>
+			</>
 		)
 	}
 
 	return (
 		<div>
-			<header>
-				<h1>AdelyApp</h1>
-				<div className="current-username">Logged in as: {user.username}</div>
-				<hr></hr>
-			</header>
+			<Header/>
 			<main>
 				<div className="chat-window-wrapper">
 					<ChatWindow 
