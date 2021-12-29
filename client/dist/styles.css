@@ -1,0 +1,89 @@
+
+header {
+  display: grid;
+  grid-template-columns: 50% 50%;
+}
+
+.current-username {
+  text-align: right;
+}
+
+.chat-window-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.room-select-wrapper {
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.create-room-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
+.create-room-button {
+  background-color: lightcyan;
+  height: 30px;
+  border-radius: 10px;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+.chat-room-wrapper {
+  margin: 10px;
+  border: 1px darkslategray solid;
+  background-color: lightskyblue;
+  border-radius: 20px;
+  padding-top: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  margin: auto;
+  display: grid;
+  grid-template-rows: 90% 10%;
+  width: 400px;
+  height: 300px;
+}
+.chats-wrapper {
+  height: 290px;
+  background-color: white;
+  border-radius: 10px;
+}
+
+.chats {
+  padding: 10px;
+  /* border: 2px blue solid; */
+}
+.message-input-wrapper {
+  display: grid;
+  grid-template-columns: 80% 20%;
+  z-index: 2000;
+  position: relative;
+}
+
+.message-submit-wrapper {
+  /* position: relative;
+  z-index: 2; */
+  /* This is empty for now */
+}
+.message-submit-button {
+  padding: 5%;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+.message {
+  font-family: 'Ubuntu Mono', monospace;
+}
+
+.message-username {
+  font-weight: 900;
+}
+
+.self {
+  color: red;
+}
+.other {
+  color: blue;
+}

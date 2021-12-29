@@ -13,13 +13,550 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/ChatWindow.jsx */ "./src/components/ChatWindow.jsx");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
 
 
 var App = function App() {
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null);
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+      _useState2 = _slicedToArray(_useState, 2),
+      usernameInput = _useState2[0],
+      setUsernameInput = _useState2[1];
+
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+      _useState4 = _slicedToArray(_useState3, 2),
+      passwordInput = _useState4[0],
+      setPasswordInput = _useState4[1];
+
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState6 = _slicedToArray(_useState5, 2),
+      usernameValid = _useState6[0],
+      setUsernameValid = _useState6[1];
+
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState8 = _slicedToArray(_useState7, 2),
+      passwordValid = _useState8[0],
+      setPasswordValid = _useState8[1];
+
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState10 = _slicedToArray(_useState9, 2),
+      usernameAvailable = _useState10[0],
+      setUsernameAvailable = _useState10[1];
+
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState12 = _slicedToArray(_useState11, 2),
+      user = _useState12[0],
+      setUser = _useState12[1];
+
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState14 = _slicedToArray(_useState13, 2),
+      room = _useState14[0],
+      setRoom = _useState14[1];
+
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState16 = _slicedToArray(_useState15, 2),
+      rooms = _useState16[0],
+      setRooms = _useState16[1];
+
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+      _useState18 = _slicedToArray(_useState17, 2),
+      roomCatalogue = _useState18[0],
+      setRoomCatalogue = _useState18[1];
+
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    getAllRooms();
+  }, [user]);
+
+  var handleUserLoginSubmit = function handleUserLoginSubmit(e) {
+    var validate1 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_2__.validateUsername)(usernameInput);
+    var validate2 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_2__.validatePassword)(passwordInput);
+    setUsernameValid(validate1);
+    setPasswordValid(validate2);
+
+    if (Array.isArray(validate1) || Array.isArray(validate2)) {
+      return;
+    }
+
+    return fetch("/users?user=".concat(usernameInput)).then(function (result) {
+      return result.json();
+    }).then(function (getUserResult) {
+      if (getUserResult === 'username doesn\'t exist') {
+        setUsernameAvailable('Username available!');
+        fetch('/users', {
+          method: 'POST',
+          body: JSON.stringify({
+            username: usernameInput,
+            password: passwordInput
+          })
+        }).then(function (result) {
+          return result.json();
+        }).then(function (result) {
+          return setUser({
+            username: usernameInput,
+            userId: result
+          });
+        })["catch"](function (err) {
+          return console.error(err);
+        });
+      } else {
+        setUsernameAvailable('Username already taken.');
+      }
+    })["catch"](function (err) {
+      return console.error(err);
+    });
+  };
+
+  var getAllRooms = function getAllRooms() {
+    fetch('/rooms').then(function (results) {
+      return results.json();
+    }).then(function (results) {
+      var allRooms = {};
+      results.forEach(function (result) {
+        return allRooms[result.id] = result.name;
+      });
+      setRooms(results); //array of room objects
+
+      setRoomCatalogue(allRooms); //object with key as room name, id as value
+    })["catch"](function (err) {
+      return console.error(err);
+    });
+  };
+
+  var handleEnterKeyPress = function handleEnterKeyPress(e) {
+    if (e.code === 'Enter') {
+      handleUserLoginSubmit();
+    }
+  };
+
+  var handleUsernameChange = function handleUsernameChange(e) {
+    setUsernameInput(e.target.value);
+  };
+
+  var handlePasswordChange = function handlePasswordChange(e) {
+    setPasswordInput(e.target.value);
+  };
+
+  if (user === null) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", null, "Username:", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+      onKeyDown: handleEnterKeyPress,
+      onChange: handleUsernameChange,
+      value: usernameInput
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      className: "username-validity"
+    }, Array.isArray(usernameValid) ? JSON.stringify(usernameValid) : usernameValid), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      className: "username-availability"
+    }, usernameAvailable), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", null, "Password:", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+      onKeyDown: handleEnterKeyPress,
+      onChange: handlePasswordChange,
+      value: passwordInput
+    })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+      className: "password-validity"
+    }, Array.isArray(passwordValid) ? JSON.stringify(passwordValid) : passwordValid), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+      onClick: handleUserLoginSubmit
+    }, "Log In"));
+  }
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("header", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "AdelyApp"), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "current-username"
+  }, "Logged in as: ", user.username), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("hr", null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("main", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "chat-window-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    username: user,
+    room: room,
+    rooms: rooms,
+    roomCatalogue: roomCatalogue,
+    setRoom: setRoom,
+    getAllRooms: getAllRooms
+  }))));
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (App);
+
+/***/ }),
+
+/***/ "./src/components/ChatRoom.jsx":
+/*!*************************************!*\
+  !*** ./src/components/ChatRoom.jsx ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _MessageFeed_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MessageFeed.jsx */ "./src/components/MessageFeed.jsx");
+/* harmony import */ var _MessageInput_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./MessageInput.jsx */ "./src/components/MessageInput.jsx");
+
+
+
+
+
+var ChatRoom = function ChatRoom(_ref) {
+  var messages = _ref.messages,
+      username = _ref.username,
+      inputText = _ref.inputText,
+      setInputText = _ref.setInputText,
+      setMessages = _ref.setMessages,
+      room = _ref.room,
+      getMessagesByRoomId = _ref.getMessagesByRoomId;
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "chat-room-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_MessageFeed_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    username: username,
+    setInputText: setInputText,
+    inputText: inputText,
+    room: room,
+    getMessagesByRoomId: getMessagesByRoomId,
+    setMessages: setMessages,
+    messages: messages
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_MessageInput_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    username: username,
+    setInputText: setInputText,
+    setMessages: setMessages,
+    inputText: inputText,
+    getMessagesByRoomId: getMessagesByRoomId,
+    room: room
+  })));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ChatRoom);
+
+/***/ }),
+
+/***/ "./src/components/ChatWindow.jsx":
+/*!***************************************!*\
+  !*** ./src/components/ChatWindow.jsx ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _ChatRoom_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ChatRoom.jsx */ "./src/components/ChatRoom.jsx");
+/* harmony import */ var _RoomSelect_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./RoomSelect.jsx */ "./src/components/RoomSelect.jsx");
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+
+
+
+
+
+var ChatWindow = function ChatWindow(_ref) {
+  var username = _ref.username,
+      rooms = _ref.rooms,
+      room = _ref.room,
+      setRoom = _ref.setRoom,
+      getAllRooms = _ref.getAllRooms,
+      roomCatalogue = _ref.roomCatalogue;
+
+  var _useState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]),
+      _useState2 = _slicedToArray(_useState, 2),
+      messages = _useState2[0],
+      setMessages = _useState2[1];
+
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+      _useState4 = _slicedToArray(_useState3, 2),
+      inputText = _useState4[0],
+      setInputText = _useState4[1];
+
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(''),
+      _useState6 = _slicedToArray(_useState5, 2),
+      addRoomInputText = _useState6[0],
+      setAddRoomInputText = _useState6[1];
+
+  var _useState7 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+      _useState8 = _slicedToArray(_useState7, 2),
+      intervalId = _useState8[0],
+      setIntervalId = _useState8[1];
+
+  var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false),
+      _useState10 = _slicedToArray(_useState9, 2),
+      fetchingMessages = _useState10[0],
+      setFetchingMessages = _useState10[1];
+
+  var handleAddRoomChange = function handleAddRoomChange(e) {
+    setAddRoomInputText(e.target.value);
+  };
+
+  var handleSelectRoomChange = function handleSelectRoomChange(e) {
+    var name = roomCatalogue[e.target.value];
+    var id = e.target.value;
+    setRoom({
+      id: id,
+      name: name
+    });
+  };
+
+  var getMessagesByRoomId = function getMessagesByRoomId(roomId) {
+    fetch("/messages?roomId=".concat(roomId)).then(function (results) {
+      return results.json();
+    }).then(function (results) {
+      return setMessages(results);
+    })["catch"](function (err) {
+      return console.error(err);
+    });
+  };
+
+  var addRoom = function addRoom() {
+    fetch('/rooms', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: addRoomInputText
+      })
+    }).then(function (result) {
+      return result.json();
+    }).then(function (roomId) {
+      setRoom({
+        name: addRoomInputText,
+        id: roomId
+      });
+      getAllRooms();
+    });
+  };
+
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
+    if (room === null) {
+      return;
+    }
+
+    clearInterval(intervalId);
+    var newIntervalId = setInterval(function () {
+      return getMessagesByRoomId(room.id);
+    }, 200);
+    setIntervalId(newIntervalId);
+  }, [room]);
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_RoomSelect_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    rooms: rooms,
+    addRoom: addRoom,
+    handleAddRoomChange: handleAddRoomChange,
+    addRoomInputText: addRoomInputText,
+    handleSelectRoomChange: handleSelectRoomChange
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_ChatRoom_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    username: username,
+    setInputText: setInputText,
+    inputText: inputText,
+    room: room,
+    getMessagesByRoomId: getMessagesByRoomId,
+    setMessages: setMessages,
+    messages: messages
+  }));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (ChatWindow);
+
+/***/ }),
+
+/***/ "./src/components/Message.jsx":
+/*!************************************!*\
+  !*** ./src/components/Message.jsx ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+var Message = function Message(_ref) {
+  var self = _ref.self,
+      messageData = _ref.messageData;
+  var id = messageData.id,
+      message = messageData.message,
+      timestamp = messageData.timestamp,
+      username = messageData.username,
+      roomId = messageData.roomId;
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "message"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
+    className: "message-username".concat(username === self.username ? ' self' : ' other')
+  }, username, ":\xA0"), message));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Message);
+
+/***/ }),
+
+/***/ "./src/components/MessageFeed.jsx":
+/*!****************************************!*\
+  !*** ./src/components/MessageFeed.jsx ***!
+  \****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var _Message_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Message.jsx */ "./src/components/Message.jsx");
+
+
+
+var MessageFeed = function MessageFeed(_ref) {
+  var username = _ref.username,
+      messages = _ref.messages;
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "chats-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "chats"
+  }, messages.length ? messages.map(function (message, i) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Message_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      key: "message-".concat(username, "-").concat(message.id, "-").concat(i),
+      self: username,
+      messageData: message
+    });
+  }) : null));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MessageFeed);
+
+/***/ }),
+
+/***/ "./src/components/MessageInput.jsx":
+/*!*****************************************!*\
+  !*** ./src/components/MessageInput.jsx ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+var MessageInput = function MessageInput(_ref) {
+  var username = _ref.username,
+      setInputText = _ref.setInputText,
+      setMessages = _ref.setMessages,
+      inputText = _ref.inputText,
+      getMessagesByRoomId = _ref.getMessagesByRoomId,
+      room = _ref.room;
+
+  var handleShadowTextInputChange = function handleShadowTextInputChange(e) {
+    setInputText(e.target.value);
+  };
+
+  var handleEnterKeyPress = function handleEnterKeyPress(e) {
+    if (e.code === 'Enter') {
+      handleSubmitMessages();
+    }
+  };
+
+  var handleSubmitMessages = function handleSubmitMessages() {
+    console.log('username', username);
+    fetch('/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: username.username,
+        message: inputText,
+        roomId: room.id
+      })
+    }).then(function (_) {
+      return getMessagesByRoomId(room.id);
+    }).then(function (results) {
+      return results.json();
+    }).then(function (results) {
+      setInputText('');
+      setMessages(results);
+    });
+  };
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "message-input-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+    id: "shadow-text-input",
+    onKeyPress: handleEnterKeyPress,
+    onChange: handleShadowTextInputChange,
+    value: inputText
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "message-submit-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    className: "message-submit-button",
+    onClick: handleSubmitMessages
+  }, "Enter"))));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MessageInput);
+
+/***/ }),
+
+/***/ "./src/components/RoomSelect.jsx":
+/*!***************************************!*\
+  !*** ./src/components/RoomSelect.jsx ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+var RoomSelect = function RoomSelect(_ref) {
+  var rooms = _ref.rooms,
+      addRoom = _ref.addRoom,
+      handleAddRoomChange = _ref.handleAddRoomChange,
+      handleSelectRoomChange = _ref.handleSelectRoomChange,
+      addRoomInputText = _ref.addRoomInputText;
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "room-select-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "create-room-wrapper"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+    onChange: handleAddRoomChange,
+    value: addRoomInputText
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
+    className: "create-room-button",
+    onClick: addRoom
+  }, "Create Room")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("select", {
+    className: "select-room-dropdown",
+    onChange: handleSelectRoomChange
+  }, rooms.map(function (room, i) {
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("option", {
+      key: "".concat(room.name, "-").concat(room.id, "-").concat(i),
+      value: room.id
+    }, room.name);
+  })));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (RoomSelect);
 
 /***/ }),
 
@@ -29830,6 +30367,145 @@ if (false) {} else {
 if (false) {} else {
   module.exports = __webpack_require__(/*! ./cjs/scheduler-tracing.development.js */ "./node_modules/scheduler/cjs/scheduler-tracing.development.js");
 }
+
+
+/***/ }),
+
+/***/ "./src/utils.js":
+/*!**********************!*\
+  !*** ./src/utils.js ***!
+  \**********************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "validateUsername": () => (/* binding */ validateUsername),
+/* harmony export */   "validatePassword": () => (/* binding */ validatePassword)
+/* harmony export */ });
+var validateUsername = function validateUsername(username) {
+  var invalidReasons = [];
+
+  if (username.length < 8 || username.length > 20) {
+    invalidReasons.push('have between 8 and 20 characters');
+  }
+
+  var letters = 0;
+  var containsSpaces = false;
+  var invalidChar = false;
+  var regex = /[a-zA-Z]/;
+
+  for (var i = 0; i < username.length; i += 1) {
+    var _char = username[i];
+
+    if (regex.test(_char)) {
+      letters += 1;
+      continue;
+    }
+
+    if (parseInt(_char) >= 0) {
+      continue;
+    }
+
+    if (_char === ' ') {
+      containsSpaces = true;
+      continue;
+    }
+
+    if (_char === '.' || _char === '@' || _char === '_' || _char === '-') {
+      continue;
+    }
+
+    invalidChar = true;
+  }
+
+  if (!letters) {
+    invalidReasons.push('contain at least one letter');
+  }
+
+  if (containsSpaces) {
+    invalidReasons.push('NOT contain any spaces');
+  }
+
+  if (invalidChar) {
+    invalidReasons.push('only contain letters, numbers, and special characters @.-_');
+  }
+
+  return invalidReasons.length ? invalidReasons : 'valid';
+};
+
+var validatePassword = function validatePassword(password) {
+  var invalidReasons = [];
+
+  if (password.length < 8 || password.length > 15) {
+    invalidReasons.push('have between 8 to 15 characters.');
+  }
+
+  var lowerCase = 0;
+  var upperCase = 0;
+  var letters = 0;
+  var numbers = 0;
+  var specialChars = 0;
+  var threeInRow = false;
+  var inRowCount = [0, null];
+  var specialCharsRegex = /^[^a-zA-Z]+$/;
+
+  for (var i = 0; i < password.length; i += 1) {
+    var _char2 = password[i];
+
+    if (_char2 === ' ') {
+      invalidReasons.push('have no spaces.');
+    }
+
+    if (isNaN(Number(_char2))) {
+      if (specialCharsRegex.test(_char2)) {
+        specialChars += 1;
+      } else {
+        letters += 1;
+        _char2 === _char2.toUpperCase() ? upperCase += 1 : lowerCase += 1;
+      }
+    } else {
+      numbers += 1;
+    }
+
+    if (_char2 === inRowCount[1]) {
+      inRowCount[0] += 1;
+    } else {
+      inRowCount[0] = 1;
+      inRowCount[1] = _char2;
+    }
+
+    if (inRowCount[0] === 3) {
+      threeInRow = true;
+    }
+  }
+
+  if (threeInRow) {
+    invalidReasons.push('NOT have 3 of the same characters in a row');
+  }
+
+  if (letters < 3) {
+    invalidReasons.push('have at least 3 letters.');
+  }
+
+  var atLeastThree = 0;
+  var neededAtLeastThreeOf = [];
+  lowerCase ? atLeastThree += 1 : neededAtLeastThreeOf.push('have a lower case letter');
+  upperCase ? atLeastThree += 1 : neededAtLeastThreeOf.push('have an upper case letter');
+  numbers ? atLeastThree += 1 : neededAtLeastThreeOf.push('have a number');
+  specialChars ? atLeastThree += 1 : neededAtLeastThreeOf.push('have a special character');
+
+  if (!invalidReasons.length && atLeastThree >= 3) {
+    return 'valid';
+  }
+
+  if (atLeastThree < 3) {
+    invalidReasons.push('have at least three of the following: ');
+    invalidReasons = invalidReasons.concat(neededAtLeastThreeOf);
+  }
+
+  return invalidReasons;
+};
+
 
 
 /***/ })
