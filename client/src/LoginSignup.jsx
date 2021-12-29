@@ -1,6 +1,8 @@
 import React from 'react';
 
-const Login = ({ 
+
+
+const LoginSignup = ({ 
   handleEnterKeyPress, 
   handleUsernameChange, 
   usernameInput, 
@@ -9,10 +11,22 @@ const Login = ({
   handlePasswordChange,
   passwordInput,
   passwordValid,
-  handleUserLoginSubmit
+  handleUserLoginSubmit,
+  loginOrSignup,
+  setLoginOrSignup
 }) => {
+
+  const handleChangeLogInSignUpOnClick = () => {
+    const newMode = loginOrSignup === 'login' ? 'signup' : 'login'
+    setLoginOrSignup(newMode);
+  }
+
+
   return (
-    <div>
+
+    <div className="login-signup">
+      {loginOrSignup === 'login' ? 'Log In' : 'Sign up'}
+      {loginOrSignup === 'login' ? <div>Don't have a username? <span onClick={handleChangeLogInSignUpOnClick}>Sign up!</span></div> : <div>Already a user? <span onClick={handleChangeLogInSignUpOnClick}>Log in!</span></div>}
       <label>
         Username: 
         <input onKeyDown={handleEnterKeyPress} onChange={handleUsernameChange} value={usernameInput}></input>
@@ -24,10 +38,10 @@ const Login = ({
         <input onKeyDown={handleEnterKeyPress} onChange={handlePasswordChange} value={passwordInput}></input>
       </label>
       <div className="password-validity">{Array.isArray(passwordValid) ? JSON.stringify(passwordValid) : passwordValid}</div>
-      <button onClick={handleUserLoginSubmit}>Log In</button>
+      <button onClick={handleUserLoginSubmit}>{loginOrSignup === 'login' ? 'Log In' : 'Sign up'}</button>
     </div>
   )
 }
 
 
-export default Login;
+export default LoginSignup;

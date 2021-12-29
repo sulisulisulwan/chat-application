@@ -4,6 +4,12 @@ header {
   grid-template-columns: 50% 50%;
 }
 
+.login-signup {
+  margin: auto;
+  max-width: 300px;
+}
+
+
 .current-username {
   text-align: right;
 }

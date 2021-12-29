@@ -1,8 +1,10 @@
 import React from 'react';
-import Login from './Login.jsx'
+import LoginSignup from './LoginSignup.jsx'
+import Header from './Header.jsx'
 import { useState, useEffect } from 'react';
 import ChatWindow from './components/ChatWindow.jsx';
 import { validateUsername, validatePassword } from './utils.js'
+
 const App = () => {
 
   const [ usernameInput, setUsernameInput ] = useState('')
@@ -10,7 +12,7 @@ const App = () => {
 	const [ usernameValid, setUsernameValid] = useState(null)
 	const [ passwordValid, setPasswordValid] = useState(null)
 	const [ usernameAvailable, setUsernameAvailable ] = useState(null);
-
+	const [ loginOrSignup, setLoginOrSignup ] = useState('login')
 
   const [ user, setUser ] = useState(null)
   const [ room, setRoom ] = useState(null);
@@ -79,10 +81,10 @@ const App = () => {
 		setPasswordInput(e.target.value);
 	}
 
-	if (user === null) {
-		return (
-			<>
-				<Login
+	return (
+		<div>
+			<Header user={user} setUser={user}/>
+			{ user === null ? <LoginSignup
 				  handleEnterKeyPress={handleEnterKeyPress}
 					handleUsernameChange={handleUsernameChange}
 					usernameInput={usernameInput}
@@ -92,26 +94,22 @@ const App = () => {
 					passwordInput={passwordInput}
 					passwordValid={passwordValid}
 					handleUserLoginSubmit={handleUserLoginSubmit}
-				/>
-			</>
-		)
-	}
-
-	return (
-		<div>
-			<Header/>
-			<main>
-				<div className="chat-window-wrapper">
-					<ChatWindow 
-						username={user} 
-						room={room} 
-						rooms={rooms} 
-						roomCatalogue={roomCatalogue}
-						setRoom={setRoom}
-						getAllRooms={getAllRooms}
-					/>
-				</div>
-			</main>
+					loginOrSignup={loginOrSignup}
+					setLoginOrSignup={setLoginOrSignup}
+				/> :
+				<main>
+					<div className="chat-window-wrapper">
+						<ChatWindow 
+							username={user} 
+							room={room} 
+							rooms={rooms} 
+							roomCatalogue={roomCatalogue}
+							setRoom={setRoom}
+							getAllRooms={getAllRooms}
+						/>
+					</div>
+				</main> 
+			}
 		</div>
 	)
 }

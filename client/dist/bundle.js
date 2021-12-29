@@ -13,9 +13,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
-/* harmony import */ var _Login_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Login.jsx */ "./src/Login.jsx");
-/* harmony import */ var _components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/ChatWindow.jsx */ "./src/components/ChatWindow.jsx");
-/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
+/* harmony import */ var _LoginSignup_jsx__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LoginSignup.jsx */ "./src/LoginSignup.jsx");
+/* harmony import */ var _Header_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Header.jsx */ "./src/Header.jsx");
+/* harmony import */ var _components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/ChatWindow.jsx */ "./src/components/ChatWindow.jsx");
+/* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -27,6 +28,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -60,33 +62,38 @@ var App = function App() {
       usernameAvailable = _useState10[0],
       setUsernameAvailable = _useState10[1];
 
-  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('login'),
       _useState12 = _slicedToArray(_useState11, 2),
-      user = _useState12[0],
-      setUser = _useState12[1];
+      loginOrSignup = _useState12[0],
+      setLoginOrSignup = _useState12[1];
 
   var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState14 = _slicedToArray(_useState13, 2),
-      room = _useState14[0],
-      setRoom = _useState14[1];
+      user = _useState14[0],
+      setUser = _useState14[1];
 
   var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState16 = _slicedToArray(_useState15, 2),
-      rooms = _useState16[0],
-      setRooms = _useState16[1];
+      room = _useState16[0],
+      setRoom = _useState16[1];
 
-  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+  var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState18 = _slicedToArray(_useState17, 2),
-      roomCatalogue = _useState18[0],
-      setRoomCatalogue = _useState18[1];
+      rooms = _useState18[0],
+      setRooms = _useState18[1];
+
+  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+      _useState20 = _slicedToArray(_useState19, 2),
+      roomCatalogue = _useState20[0],
+      setRoomCatalogue = _useState20[1];
 
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     getAllRooms();
   }, [user]);
 
   var handleUserLoginSubmit = function handleUserLoginSubmit(e) {
-    var validate1 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_3__.validateUsername)(usernameInput);
-    var validate2 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_3__.validatePassword)(passwordInput);
+    var validate1 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_4__.validateUsername)(usernameInput);
+    var validate2 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_4__.validatePassword)(passwordInput);
     setUsernameValid(validate1);
     setPasswordValid(validate2);
 
@@ -153,23 +160,24 @@ var App = function App() {
     setPasswordInput(e.target.value);
   };
 
-  if (user === null) {
-    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Login_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
-      handleEnterKeyPress: handleEnterKeyPress,
-      handleUsernameChange: handleUsernameChange,
-      usernameInput: usernameInput,
-      usernameValid: usernameValid,
-      usernameAvailable: usernameAvailable,
-      handlePasswordChange: handlePasswordChange,
-      passwordInput: passwordInput,
-      passwordValid: passwordValid,
-      handleUserLoginSubmit: handleUserLoginSubmit
-    }));
-  }
-
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(Header, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("main", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_Header_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    user: user,
+    setUser: user
+  }), user === null ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_LoginSignup_jsx__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    handleEnterKeyPress: handleEnterKeyPress,
+    handleUsernameChange: handleUsernameChange,
+    usernameInput: usernameInput,
+    usernameValid: usernameValid,
+    usernameAvailable: usernameAvailable,
+    handlePasswordChange: handlePasswordChange,
+    passwordInput: passwordInput,
+    passwordValid: passwordValid,
+    handleUserLoginSubmit: handleUserLoginSubmit,
+    loginOrSignup: loginOrSignup,
+    setLoginOrSignup: setLoginOrSignup
+  }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("main", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "chat-window-wrapper"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_2__["default"], {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_3__["default"], {
     username: user,
     room: room,
     rooms: rooms,
@@ -183,10 +191,10 @@ var App = function App() {
 
 /***/ }),
 
-/***/ "./src/Login.jsx":
-/*!***********************!*\
-  !*** ./src/Login.jsx ***!
-  \***********************/
+/***/ "./src/Header.jsx":
+/*!************************!*\
+  !*** ./src/Header.jsx ***!
+  \************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -196,7 +204,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 
 
-var Login = function Login(_ref) {
+var Header = function Header(_ref) {
+  var user = _ref.user;
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("header", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("h1", null, "AdelyApp"), user ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "current-username"
+  }, "`Logged in as: $", user.username, "` | ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, "Logout")) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("hr", null));
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Header);
+
+/***/ }),
+
+/***/ "./src/LoginSignup.jsx":
+/*!*****************************!*\
+  !*** ./src/LoginSignup.jsx ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+
+
+var LoginSignup = function LoginSignup(_ref) {
   var handleEnterKeyPress = _ref.handleEnterKeyPress,
       handleUsernameChange = _ref.handleUsernameChange,
       usernameInput = _ref.usernameInput,
@@ -205,8 +237,22 @@ var Login = function Login(_ref) {
       handlePasswordChange = _ref.handlePasswordChange,
       passwordInput = _ref.passwordInput,
       passwordValid = _ref.passwordValid,
-      handleUserLoginSubmit = _ref.handleUserLoginSubmit;
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", null, "Username:", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
+      handleUserLoginSubmit = _ref.handleUserLoginSubmit,
+      loginOrSignup = _ref.loginOrSignup,
+      setLoginOrSignup = _ref.setLoginOrSignup;
+
+  var handleChangeLogInSignUpOnClick = function handleChangeLogInSignUpOnClick() {
+    var newMode = loginOrSignup === 'login' ? 'signup' : 'login';
+    setLoginOrSignup(newMode);
+  };
+
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
+    className: "login-signup"
+  }, loginOrSignup === 'login' ? 'Log In' : 'Sign up', loginOrSignup === 'login' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, "Don't have a username? ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
+    onClick: handleChangeLogInSignUpOnClick
+  }, "Sign up!")) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", null, "Already a user? ", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", {
+    onClick: handleChangeLogInSignUpOnClick
+  }, "Log in!")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("label", null, "Username:", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("input", {
     onKeyDown: handleEnterKeyPress,
     onChange: handleUsernameChange,
     value: usernameInput
@@ -222,10 +268,10 @@ var Login = function Login(_ref) {
     className: "password-validity"
   }, Array.isArray(passwordValid) ? JSON.stringify(passwordValid) : passwordValid), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
     onClick: handleUserLoginSubmit
-  }, "Log In"));
+  }, loginOrSignup === 'login' ? 'Log In' : 'Sign up'));
 };
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Login);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (LoginSignup);
 
 /***/ }),
 
