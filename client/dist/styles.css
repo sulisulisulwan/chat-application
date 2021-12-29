@@ -1,0 +1,37 @@
+
+
+.chat-room-wrapper {
+  border: 2px red solid;
+  margin: auto;
+  display: grid;
+  grid-template-rows: 90% 10%;
+  width: 400px;
+  height: 300px;
+}
+
+.chats {
+  border: 2px blue solid;
+}
+.message-input-wrapper {
+  display: grid;
+  grid-template-columns: 80% 20%;
+  z-index: 2000;
+  position: relative;
+}
+
+#shadow-text-input {
+  bottom: 0;
+  z-index: 0;
+  outline: none;
+}
+.message-submit-wrapper {
+  /* position: relative;
+  z-index: 2; */
+  /* This is empty for now */
+}
+.message-submit-button {
+  padding: 5%;
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
