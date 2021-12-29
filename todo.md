@@ -7,11 +7,16 @@ Need to create auth middleware to
   :manage cookies
 
 Need to allow concurrent users to chat in real time over server.
-
+  https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
 
 <!-- Migrate to MongoDB -->
 
 Tech Debt:
   Refactor all parts of server as classes
 
+
+FUTURE IDEAS FOR APP:
+  - Integrate game center
+  - Integrate Syb stuff?
+  - Have a musician's corner?  Silly stuff?
 
