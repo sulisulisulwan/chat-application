@@ -4,6 +4,8 @@ import Header from './Header.jsx'
 import { useState, useEffect } from 'react';
 import ChatWindow from './components/ChatWindow.jsx';
 import { validateUsername, validatePassword } from './utils.js'
+import api from './server_api_calls';
+
 
 const App = () => {
 
@@ -14,6 +16,8 @@ const App = () => {
 	const [ usernameAvailable, setUsernameAvailable ] = useState(null);
 	const [ loginOrSignup, setLoginOrSignup ] = useState('login')
 
+	const [ credentialsValid, setCredentialsValid ] = useState(null)
+
   const [ user, setUser ] = useState(null)
   const [ room, setRoom ] = useState(null);
 	const [ rooms, setRooms ] = useState(null);
@@ -23,11 +27,28 @@ const App = () => {
 		getAllRooms()
 	}, [user])
 
-	const handleUserLoginSubmit = (e) => {
+	const handleLoginSubmit = (e) => {
+
+		return api.get.userExists(usernameInput)
+			.then(userExists => {
+				if (userExists) {
+					return api.create.orRestoreSession(usernameInput, passwordInput)
+				}
+				setCredentialsValid(false)
+			})
+			.then(user => {
+				user.authorized ? setCredentialsValid(true) : setCredentialsValid(false);
+				if (user.authorized) {
+					setUser(user.data)
+				}
+			})
+			.catch(err => console.error(err))
+	}
+
+	const handleSignupSubmit = (e) => {
 
 		const validate1 = validateUsername(usernameInput);
 		const validate2 = validatePassword(passwordInput);
-
 		setUsernameValid(validate1)
 		setPasswordValid(validate2)
 
@@ -35,30 +56,20 @@ const App = () => {
 			return;
 		}
 
-		return fetch(`/users?user=${usernameInput}`)
-			.then(result => result.json())
-			.then(getUserResult => {
-				if (getUserResult === 'username doesn\'t exist') {
-					setUsernameAvailable('Username available!')
-					fetch('/users', {
-						method: 'POST',
-						body: JSON.stringify({
-							username: usernameInput, password: passwordInput
-						})
-					})
-						.then(result => result.json())
-						.then(result => setUser({ username: usernameInput, userId: result }))
+		api.get.userExists(usernameInput)
+			.then(userExists => {
+				userExists ? setUsernameAvailable('Username already taken.') : setUsernameAvailable('Username available!')
+				if (!userExists) {
+					api.create.newUser(usernameInput, passwordInput)
+						.then(userId => setUser({ username: usernameInput, userId }))
 						.catch(err => console.error(err));
-				} else {
-					setUsernameAvailable('Username already taken.')
 				}
 			})
 			.catch(err => console.error(err))
 	}
 
 	const getAllRooms = () => {
-		fetch('/rooms')
-			.then(results => results.json())
+		return api.get.allRooms()
 			.then(results => {
 				const allRooms = {};
 				results.forEach(result => allRooms[result.id] = result.name)
@@ -93,7 +104,9 @@ const App = () => {
 					handlePasswordChange={handlePasswordChange}
 					passwordInput={passwordInput}
 					passwordValid={passwordValid}
-					handleUserLoginSubmit={handleUserLoginSubmit}
+					credentialsValid={credentialsValid}
+					handleSignupSubmit={handleSignupSubmit}
+					handleLoginSubmit={handleLoginSubmit}
 					loginOrSignup={loginOrSignup}
 					setLoginOrSignup={setLoginOrSignup}
 				/> :

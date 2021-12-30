@@ -1,5 +1,4 @@
 User creation and login form functionality needs to be tested end to end
-User creation and login form needs to be styled
 
 Need to create auth middleware to 
   :encrypt passwords

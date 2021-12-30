@@ -11,7 +11,9 @@ const LoginSignup = ({
   handlePasswordChange,
   passwordInput,
   passwordValid,
-  handleUserLoginSubmit,
+  handleLoginSubmit,
+  credentialsValid,
+  handleSignupSubmit,
   loginOrSignup,
   setLoginOrSignup
 }) => {
@@ -38,7 +40,8 @@ const LoginSignup = ({
         <input onKeyDown={handleEnterKeyPress} onChange={handlePasswordChange} value={passwordInput}></input>
       </label>
       <div className="password-validity">{Array.isArray(passwordValid) ? JSON.stringify(passwordValid) : passwordValid}</div>
-      <button onClick={handleUserLoginSubmit}>{loginOrSignup === 'login' ? 'Log In' : 'Sign up'}</button>
+      <button onClick={loginOrSignup === 'signup' ? handleSignupSubmit : handleLoginSubmit}>{loginOrSignup === 'login' ? 'Log In' : 'Sign up'}</button>
+      {credentialsValid}
     </div>
   )
 }

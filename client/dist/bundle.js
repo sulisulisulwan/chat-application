@@ -17,6 +17,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Header_jsx__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Header.jsx */ "./src/Header.jsx");
 /* harmony import */ var _components_ChatWindow_jsx__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/ChatWindow.jsx */ "./src/components/ChatWindow.jsx");
 /* harmony import */ var _utils_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils.js */ "./src/utils.js");
+/* harmony import */ var _server_api_calls__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./server_api_calls */ "./src/server_api_calls/index.js");
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -28,6 +29,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
 
 
 
@@ -69,29 +71,52 @@ var App = function App() {
 
   var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState14 = _slicedToArray(_useState13, 2),
-      user = _useState14[0],
-      setUser = _useState14[1];
+      credentialsValid = _useState14[0],
+      setCredentialsValid = _useState14[1];
 
   var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState16 = _slicedToArray(_useState15, 2),
-      room = _useState16[0],
-      setRoom = _useState16[1];
+      user = _useState16[0],
+      setUser = _useState16[1];
 
   var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState18 = _slicedToArray(_useState17, 2),
-      rooms = _useState18[0],
-      setRooms = _useState18[1];
+      room = _useState18[0],
+      setRoom = _useState18[1];
 
-  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null),
       _useState20 = _slicedToArray(_useState19, 2),
-      roomCatalogue = _useState20[0],
-      setRoomCatalogue = _useState20[1];
+      rooms = _useState20[0],
+      setRooms = _useState20[1];
+
+  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({}),
+      _useState22 = _slicedToArray(_useState21, 2),
+      roomCatalogue = _useState22[0],
+      setRoomCatalogue = _useState22[1];
 
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(function () {
     getAllRooms();
   }, [user]);
 
-  var handleUserLoginSubmit = function handleUserLoginSubmit(e) {
+  var handleLoginSubmit = function handleLoginSubmit(e) {
+    return _server_api_calls__WEBPACK_IMPORTED_MODULE_5__["default"].get.userExists(usernameInput).then(function (userExists) {
+      if (userExists) {
+        return _server_api_calls__WEBPACK_IMPORTED_MODULE_5__["default"].create.orRestoreSession(usernameInput, passwordInput);
+      }
+
+      setCredentialsValid(false);
+    }).then(function (user) {
+      user.authorized ? setCredentialsValid(true) : setCredentialsValid(false);
+
+      if (user.authorized) {
+        setUser(user.data);
+      }
+    })["catch"](function (err) {
+      return console.error(err);
+    });
+  };
+
+  var handleSignupSubmit = function handleSignupSubmit(e) {
     var validate1 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_4__.validateUsername)(usernameInput);
     var validate2 = (0,_utils_js__WEBPACK_IMPORTED_MODULE_4__.validatePassword)(passwordInput);
     setUsernameValid(validate1);
@@ -101,29 +126,18 @@ var App = function App() {
       return;
     }
 
-    return fetch("/users?user=".concat(usernameInput)).then(function (result) {
-      return result.json();
-    }).then(function (getUserResult) {
-      if (getUserResult === 'username doesn\'t exist') {
-        setUsernameAvailable('Username available!');
-        fetch('/users', {
-          method: 'POST',
-          body: JSON.stringify({
-            username: usernameInput,
-            password: passwordInput
-          })
-        }).then(function (result) {
-          return result.json();
-        }).then(function (result) {
+    _server_api_calls__WEBPACK_IMPORTED_MODULE_5__["default"].get.userExists(usernameInput).then(function (userExists) {
+      userExists ? setUsernameAvailable('Username already taken.') : setUsernameAvailable('Username available!');
+
+      if (!userExists) {
+        _server_api_calls__WEBPACK_IMPORTED_MODULE_5__["default"].create.newUser(usernameInput, passwordInput).then(function (userId) {
           return setUser({
             username: usernameInput,
-            userId: result
+            userId: userId
           });
         })["catch"](function (err) {
           return console.error(err);
         });
-      } else {
-        setUsernameAvailable('Username already taken.');
       }
     })["catch"](function (err) {
       return console.error(err);
@@ -131,9 +145,7 @@ var App = function App() {
   };
 
   var getAllRooms = function getAllRooms() {
-    fetch('/rooms').then(function (results) {
-      return results.json();
-    }).then(function (results) {
+    return _server_api_calls__WEBPACK_IMPORTED_MODULE_5__["default"].get.allRooms().then(function (results) {
       var allRooms = {};
       results.forEach(function (result) {
         return allRooms[result.id] = result.name;
@@ -172,7 +184,9 @@ var App = function App() {
     handlePasswordChange: handlePasswordChange,
     passwordInput: passwordInput,
     passwordValid: passwordValid,
-    handleUserLoginSubmit: handleUserLoginSubmit,
+    credentialsValid: credentialsValid,
+    handleSignupSubmit: handleSignupSubmit,
+    handleLoginSubmit: handleLoginSubmit,
     loginOrSignup: loginOrSignup,
     setLoginOrSignup: setLoginOrSignup
   }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("main", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
@@ -237,7 +251,9 @@ var LoginSignup = function LoginSignup(_ref) {
       handlePasswordChange = _ref.handlePasswordChange,
       passwordInput = _ref.passwordInput,
       passwordValid = _ref.passwordValid,
-      handleUserLoginSubmit = _ref.handleUserLoginSubmit,
+      handleLoginSubmit = _ref.handleLoginSubmit,
+      credentialsValid = _ref.credentialsValid,
+      handleSignupSubmit = _ref.handleSignupSubmit,
       loginOrSignup = _ref.loginOrSignup,
       setLoginOrSignup = _ref.setLoginOrSignup;
 
@@ -267,8 +283,8 @@ var LoginSignup = function LoginSignup(_ref) {
   })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("div", {
     className: "password-validity"
   }, Array.isArray(passwordValid) ? JSON.stringify(passwordValid) : passwordValid), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("button", {
-    onClick: handleUserLoginSubmit
-  }, loginOrSignup === 'login' ? 'Log In' : 'Sign up'));
+    onClick: loginOrSignup === 'signup' ? handleSignupSubmit : handleLoginSubmit
+  }, loginOrSignup === 'login' ? 'Log In' : 'Sign up'), credentialsValid);
 };
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (LoginSignup);
@@ -30454,6 +30470,122 @@ if (false) {} else {
   module.exports = __webpack_require__(/*! ./cjs/scheduler-tracing.development.js */ "./node_modules/scheduler/cjs/scheduler-tracing.development.js");
 }
 
+
+/***/ }),
+
+/***/ "./src/server_api_calls/api.create.js":
+/*!********************************************!*\
+  !*** ./src/server_api_calls/api.create.js ***!
+  \********************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _api_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./api.utils.js */ "./src/server_api_calls/api.utils.js");
+
+
+var newUser = function newUser(username, password) {
+  return fetch('/users', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      username: username,
+      password: password
+    })
+  }).then(_api_utils_js__WEBPACK_IMPORTED_MODULE_0__["default"].getJson)["catch"](function (err) {
+    return console.error(err);
+  });
+};
+
+var orRestoreSession = function orRestoreSession(usenrame, password) {
+  return fetch('/users/session', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify((username, password))
+  }).then(_api_utils_js__WEBPACK_IMPORTED_MODULE_0__["default"].getJson)["catch"](function (err) {
+    return console.error(err);
+  });
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  newUser: newUser,
+  orRestoreSession: orRestoreSession
+});
+
+/***/ }),
+
+/***/ "./src/server_api_calls/api.get.js":
+/*!*****************************************!*\
+  !*** ./src/server_api_calls/api.get.js ***!
+  \*****************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _api_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./api.utils.js */ "./src/server_api_calls/api.utils.js");
+
+
+var userExists = function userExists(usernameInput) {
+  return fetch("/users?user=".concat(usernameInput)).then(_api_utils_js__WEBPACK_IMPORTED_MODULE_0__["default"].getJson);
+};
+
+var allRooms = function allRooms() {
+  return fetch('/rooms').then(_api_utils_js__WEBPACK_IMPORTED_MODULE_0__["default"].getJson);
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  userExists: userExists,
+  allRooms: allRooms
+});
+
+/***/ }),
+
+/***/ "./src/server_api_calls/api.utils.js":
+/*!*******************************************!*\
+  !*** ./src/server_api_calls/api.utils.js ***!
+  \*******************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+var getJson = function getJson(result) {
+  return result.json();
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  getJson: getJson
+});
+
+/***/ }),
+
+/***/ "./src/server_api_calls/index.js":
+/*!***************************************!*\
+  !*** ./src/server_api_calls/index.js ***!
+  \***************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _api_get_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./api.get.js */ "./src/server_api_calls/api.get.js");
+/* harmony import */ var _api_create_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./api.create.js */ "./src/server_api_calls/api.create.js");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  get: _api_get_js__WEBPACK_IMPORTED_MODULE_0__["default"],
+  create: _api_create_js__WEBPACK_IMPORTED_MODULE_1__["default"]
+});
 
 /***/ }),
 

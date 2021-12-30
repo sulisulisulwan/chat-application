@@ -1,12 +1,10 @@
 const db = require('../../db/models').Users;
 
-const getUser = async (req, res) => {
+const getUserExists = async (req, res) => {
   try {
     const { user } = req.query;
     let results = await db.getUserByNameOrId(user)
-    if (!results.length) {
-      results = 'username doesn\'t exist';
-    }
+    let userExists = !results.length ? false : true
     res.status(200).json(results);
   } catch(err) {
     console.error(err);
@@ -28,7 +26,17 @@ const createUser = async (req, res) => {
   }
 };
 
+const createSession = async (req, res) => {
+  try {
+    res.status(201).json(res.user);
+  } catch(err) {
+    console.error(err);
+    res.sendStatus(500);
+  }
+}
+
 module.exports = {
-  getUser,
-  createUser
+  getUserExists,
+  createUser,
+  createSession
 }
